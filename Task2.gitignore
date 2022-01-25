@@ -1,0 +1,58 @@
+using System;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
+namespace Task2
+{
+
+    class Program
+    {
+         static bool IsValidJson(string strInput)
+        {
+            if (string.IsNullOrWhiteSpace(strInput)) { return false; }
+            strInput = strInput.Trim();
+            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
+                (strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
+            {
+                try
+                {
+                    var obj = JToken.Parse(strInput);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    
+                    Console.WriteLine(jex.Message);
+                    return false;
+                }
+                catch (Exception ex) //some other exception
+                {
+                    Console.WriteLine(ex.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        static void Check(string file)
+        {
+            if (File.Exists(file))
+            {
+                string str = File.ReadAllText(file);
+                IsValidJson(str);
+            }
+            else
+            Console.WriteLine("The file does not exist");
+        }
+        static void Main(string[] args)
+        {
+            Check("C:\\Users\\WIN10\\Desktop\\rachel\\not_valid_json.json");
+            Check("C:\\Users\\WIN10\\Desktop\\rachel\\valid_json.json");
+
+            Check("C:\\Users\\WIN10\\Desktop\\rachel\\aaa.txt");
+        }
+    }
+}
