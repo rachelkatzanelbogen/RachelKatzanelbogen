@@ -1,0 +1,97 @@
+package Task1;
+
+import java.util.Scanner;
+import java.util.Properties;
+
+import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.Matcher;
+
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
+import javax.mail.Session;
+import javax.mail.Transport;
+
+
+public class ProperMail {
+	static Scanner input = new Scanner(System.in);
+	//פונקציה לשליחת המייל
+	public static void SendEmail(String s, String sub, String body) {
+		//מקבל
+		String recipient=s;
+		//שולח
+		String sender="racheli9886@gmail.com";
+		
+		String host = "127.0.0.1";
+
+		Properties properties = System.getProperties();
+		//שרת הדואר
+		properties.setProperty("mail.smtp.host", host);
+		Session session = Session.getDefaultInstance(properties);
+		try
+		{
+			MimeMessage message = new MimeMessage(session);
+			
+			message.setFrom(new InternetAddress(sender));
+
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+
+			message.setSubject(sub);
+
+			message.setText(body);
+
+			Transport.send(message);
+			//System.out.println("Mail successfully sent");
+		}
+		catch (MessagingException mex)
+		{
+			mex.printStackTrace();
+		}
+
+
+
+		
+	}
+	//פונקציה שבודקת האם המייל תקין
+	 public static boolean isValid(String email)
+	    {
+	        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+	                            "[a-zA-Z0-9_+&*-]+)*@" +
+	                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+	                            "A-Z]{2,7}$";
+	                              
+	        Pattern pat = Pattern.compile(emailRegex);
+	        if (email == null)
+	            return false;
+	        return pat.matcher(email).matches();
+	    }
+	 //פונקציה ראשית
+	public static String func(String s,String sub,String body) {
+		if(!isValid(s))
+			return "Receiver email address is not a valid email address:"+ s;
+		if(sub.isEmpty())
+			return "You must write a subject to the email.";
+		
+		else
+			return "An email was successfully sent to "+ s +", with subject "+ sub + " and body"+ body;
+		
+	}
+	public static void main(String[] args) {
+		String s=null,sub=null,body=null;
+		System.out.println("Enter an email address");
+		s=input.nextLine();
+		System.out.println("Email subject: ");
+		sub=input.nextLine();
+		System.out.println("Email body: ");
+		body=input.nextLine();
+		
+			System.out.println(func(s, sub ,body));
+			if(func(s, sub ,body).startsWith("An"))
+				SendEmail(s,sub,body);
+	}
+
+
+
+
+}
